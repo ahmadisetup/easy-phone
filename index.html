@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#151F78">
+<meta name="description" content="گوشی آسان — تماس، پیام، فرمان صوتی و یادآوری دارو؛ ساده برای سالمندان">
+<title>گوشی آسان</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- ═══════════ صفحه خانه ═══════════ -->
+<section id="screen-home" class="screen">
+  <header class="home-header">
+    <div class="clock-wrap">
+      <div id="clock" class="clock">--:--</div>
+      <div id="dateLine" class="date-line"></div>
+    </div>
+    <button id="btnSettings" class="settings-btn" aria-label="تنظیمات">⚙</button>
+  </header>
+
+  <button id="overdueBanner" class="overdue-banner" hidden></button>
+
+  <main id="contactsScroll" class="contacts-scroll">
+    <div id="contactsGrid" class="contacts-grid"></div>
+    <div id="noContacts" class="empty-note" hidden>
+      <p>هنوز هیچ‌کس اضافه نشده است.</p>
+      <p class="small">آیکون ⚙ بالای صفحه را بزنید تا مخاطبین اضافه شوند</p>
+    </div>
+  </main>
+
+  <button id="btnNextMed" class="next-med" hidden>
+    <span class="next-med-label">💊 داروهای امروز</span>
+    <span id="nextMedInfo" class="next-med-info"></span>
+  </button>
+
+  <div class="home-actions">
+    <button id="btnVoice" class="voice-btn"><span class="mic-ico">🎙️</span> صحبت کنید</button>
+  </div>
+
+  <footer class="sos-wrap">
+    <button id="btnSos" class="sos-btn"><span class="sos-ico">🆘</span> کمک می‌خواهم!</button>
+  </footer>
+</section>
+
+<!-- ═══════════ صفحه داروها ═══════════ -->
+<section id="screen-meds" class="screen">
+  <header class="sub-header">
+    <button class="back-btn" data-back="home"><span class="arrow">→</span> بازگشت</button>
+    <h1>💊 داروهای امروز</h1>
+  </header>
+  <main class="meds-main">
+    <div id="medsEmpty" class="empty-note" hidden>
+      <p>دارویی ثبت نشده است.</p>
+      <p class="small">از ⚙ تنظیمات → «داروها» اضافه کنید</p>
+    </div>
+    <div id="medsList" class="meds-list"></div>
+    <button id="btnCalExport" class="cal-export">
+      📅 گذاشتن یادآور در تقویم گوشی
+      <span class="small">تا سرِ ساعتِ دارو، گوشی حتی با بسته‌بودن برنامه زنگ بزند</span>
+    </button>
+  </main>
+</section>
+
+<!-- ═══════════ اضطراری (SOS) ═══════════ -->
+<section id="screen-sos" class="screen overlay sos-screen">
+  <div id="sosCountdown" class="sos-countdown" hidden>
+    <h2>کمک بخواهیم؟</h2>
+    <div id="sosCount" class="sos-count">۳</div>
+    <p>برای لغو، دکمه پایین را بزنید</p>
+  </div>
+  <div id="sosActions" class="sos-actions" hidden>
+    <h2>به چه کمکی نیاز دارید؟</h2>
+    <div id="sosContacts" class="sos-contacts"></div>
+    <div class="sos-col">
+      <button id="sosAmbulance" class="sos-secondary">🚑 آمبولانس — ۱۱۵</button>
+      <button class="btn-no" data-back="home">بستن</button>
+    </div>
+  </div>
+  <button id="sosCancel" class="sos-cancel">لغو</button>
+</section>
+
+<!-- ═══════════ گوش دادن (فرمان صوتی) ═══════════ -->
+<section id="screen-voice" class="screen overlay voice-screen">
+  <div class="voice-mic" id="voiceMic">🎙️</div>
+  <h2 id="voiceStatus">دارم گوش می‌دهم…</h2>
+  <p id="voiceHeard" class="voice-heard"></p>
+  <button id="voiceCancel" class="btn-no">بی‌خیال</button>
+</section>
+
+<!-- ═══════════ تأیید ═══════════ -->
+<section id="screen-confirm" class="screen overlay confirm-screen">
+  <h2 id="confirmTitle"></h2>
+  <p id="confirmSub" class="confirm-sub"></p>
+  <button id="confirmYes" class="btn-yes"></button>
+  <button id="confirmNo" class="btn-no">نه، اشتباه شد</button>
+</section>
+
+<!-- ═══════════ انتخاب پیام ═══════════ -->
+<section id="screen-msg" class="screen overlay msg-screen">
+  <h2 id="msgTitle">چه پیامی بفرستم؟</h2>
+  <div id="msgChoices" class="msg-choices"></div>
+  <button class="btn-no" data-close>بی‌خیال</button>
+</section>
+
+<!-- ═══════════ هشدار دارو ═══════════ -->
+<section id="screen-alarm" class="screen overlay alarm-screen">
+  <h2>⏰ وقت دارو!</h2>
+  <div id="alarmList" class="alarm-list"></div>
+  <button id="alarmSnooze" class="btn-snooze">بعداً یادم بیاورید (۱۰ دقیقه)</button>
+  <button id="alarmDismiss" class="btn-no">بستن</button>
+</section>
+
+<!-- ═══════════ صفحه رمز ═══════════ -->
+<section id="screen-pin" class="screen overlay pin-screen">
+  <h2 id="pinTitle">رمز تنظیمات</h2>
+  <div id="pinDots" class="pin-dots"></div>
+  <p id="pinError" class="pin-error" hidden>رمز درست نیست، دوباره امتحان کنید</p>
+  <div id="pinPad" class="pin-pad"></div>
+  <button id="pinClose" class="btn-no">بی‌خیال</button>
+</section>
+
+<!-- ═══════════ راه‌اندازی اول ═══════════ -->
+<section id="screen-setup" class="screen overlay setup-screen">
+  <div class="setup-heart">💙</div>
+  <h1>گوشی آسان</h1>
+  <p class="setup-text">این برنامه برای راحتی شما آماده شده است.<br>تماس، پیام، یادآوری دارو — همه با دکمه‌های بزرگ.</p>
+  <button id="setupStart" class="btn-yes">شروع</button>
+</section>
+
+<!-- ═══════════ تنظیمات ═══════════ -->
+<section id="screen-settings" class="screen settings-screen">
+  <header class="sub-header">
+    <button class="back-btn" data-back="home"><span class="arrow">→</span> بازگشت</button>
+    <h1>⚙️ تنظیمات <span class="small">(ویژه خانواده)</span></h1>
+  </header>
+  <main class="settings-main">
+
+    <div id="setupBanner" class="setup-banner" hidden>
+      رمز ثبت شد ✅ حالا <b>مخاطبین</b> و <b>داروها</b> را اضافه کنید
+    </div>
+
+    <section class="card">
+      <h3>👥 مخاطبین</h3>
+      <div id="setContacts" class="set-list"></div>
+      <button id="btnAddContact" class="btn-add">＋ افزودن مخاطب</button>
+    </section>
+
+    <section class="card">
+      <h3>💊 داروها</h3>
+      <div id="setMeds" class="set-list"></div>
+      <button id="btnAddMed" class="btn-add">＋ افزودن دارو</button>
+    </section>
+
+    <section class="card">
+      <h3>💬 پیام‌های آماده</h3>
+      <div id="setMsgs" class="set-list"></div>
+      <div class="row">
+        <input id="newMsgInput" type="text" placeholder="پیام جدید…" maxlength="60">
+        <button id="btnAddMsg" class="btn-mini">افزودن</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>🔢 رمز</h3>
+      <button id="btnChangePin" class="btn-mini">تغییر رمز</button>
+    </section>
+
+    <section class="card">
+      <h3>🔊 آزمایش</h3>
+      <div class="row">
+        <button id="btnTestTts" class="btn-mini">آزمایش صدا</button>
+        <button id="btnTestMic" class="btn-mini">آزمایش میکروفون</button>
+      </div>
+      <p id="ttsStatus" class="small status"></p>
+    </section>
+
+    <section class="card">
+      <h3>💾 پشتیبان‌گیری</h3>
+      <div class="row">
+        <button id="btnBackup" class="btn-mini">دریافت فایل پشتیبان</button>
+        <label class="btn-mini file-btn">بازیابی<input id="fileRestore" type="file" accept=".json" hidden></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>ℹ️ راهنما</h3>
+      <p class="small">نصب روی صفحه اصلی: در کروم، منو (⋮) ← «Add to Home screen».</p>
+      <p class="small">صدای فارسی: تنظیمات گوشی ← Text-to-speech ← زبان فارسی را نصب/انتخاب کنید (Google Speech Services).</p>
+      <p class="small">فرمان‌های صوتی: «تماس با …»، «پیام به …»، «دارو»، «کمک».</p>
+    </section>
+
+  </main>
+</section>
+
+<!-- ویرایشگر مخاطب/دارو به‌صورت پویا ساخته می‌شود -->
+<div id="editorHost"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
